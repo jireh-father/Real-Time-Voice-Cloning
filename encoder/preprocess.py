@@ -59,7 +59,7 @@ def _init_preprocess_dataset(dataset_name, datasets_root, out_dir) -> (Path, Dat
 
 
 def _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, extension,
-                             skip_existing, logger, num_processes=8):
+                             skip_existing, logger, num_processes=8, speaker_dir_2_depth=True):
     print("%s: Preprocessing data for %d speakers." % (dataset_name, len(speaker_dirs)))
     
     # Function to preprocess utterances for one speaker
@@ -86,7 +86,11 @@ def _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir,
         
         # Gather all audio files for that speaker recursively
         sources_file = sources_fpath.open("a" if skip_existing else "w")
-        for in_fpath in speaker_dir.glob("**/*.%s" % extension):
+        if speaker_dir_2_depth:
+            in_fpath_list = speaker_dir.glob("**/*.%s" % extension)
+        else:
+            in_fpath_list = speaker_dir.glob("*.%s" % extension)
+        for in_fpath in in_fpath_list:
             # Check if the target output file already exists
             out_fname = "_".join(in_fpath.relative_to(speaker_dir).parts)
             out_fname = out_fname.replace(".%s" % extension, ".npy")
@@ -174,3 +178,16 @@ def preprocess_voxceleb2(datasets_root: Path, out_dir: Path, skip_existing=False
     speaker_dirs = list(dataset_root.joinpath("dev", "aac").glob("*"))
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "m4a",
                              skip_existing, logger, num_processes=num_processes)
+
+def preprocess_zeroth(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
+    dataset_name = "zeroth-korean"
+    dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
+    if not dataset_root:
+        return
+
+    # Get the speaker directories
+    # Preprocess all speakers
+    speaker_dirs = list(dataset_root.joinpath("train_data_01", "003").glob("*"))
+    speaker_dirs += list(dataset_root.joinpath("test_data_01", "003").glob("*"))
+    _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "flac",
+                             skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
