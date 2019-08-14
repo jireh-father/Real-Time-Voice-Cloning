@@ -7,6 +7,7 @@ from pathlib import Path
 from tqdm import tqdm
 import numpy as np
 from scipy.io.wavfile import write
+import os
 
 
 class DatasetLog:
@@ -220,14 +221,14 @@ def preprocess_etri_8channel(datasets_root: Path, out_dir: Path, skip_existing=F
     if not new_path.is_dir():
         new_path.mkdir()
     for tmp_dir in tmp_speaker_dirs:
-        speaker_name = tmp_dir.basename()[5:8]
+        speaker_name = os.path.basename(tmp_dir)[5:8]
         new_speaker_path = new_path.joinpath(speaker_name)
         if not new_speaker_path.is_dir():
             new_speaker_path.mkdir()
             speaker_dirs.append(new_speaker_path)
         pcms = tmp_dir.glob("*.RAW")
         for pcm_path in pcms:
-            write(new_speaker_path.joinpath(pcm_path.basename().splitext()[0]) + ".wav", 16000, np.memmap(pcm_path, dtype='h', mode='r'))
+            write(new_speaker_path.joinpath(os.path.splitext(os.path.basename(pcm_path))[0]) + ".wav", 16000, np.memmap(pcm_path, dtype='h', mode='r'))
 
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
