@@ -191,3 +191,15 @@ def preprocess_zeroth(datasets_root: Path, out_dir: Path, skip_existing=False, n
     speaker_dirs += list(dataset_root.joinpath("test_data_01", "003").glob("*"))
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "flac",
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
+
+def preprocess_speech_ko(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
+    dataset_name = "speech_ko"
+    dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
+    if not dataset_root:
+        return
+
+    # Get the speaker directories
+    # Preprocess all speakers
+    speaker_dirs = list(dataset_root.glob("*/"))
+    _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
+                             skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
