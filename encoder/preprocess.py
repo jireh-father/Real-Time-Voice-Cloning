@@ -228,7 +228,7 @@ def preprocess_etri_8channel(datasets_root: Path, out_dir: Path, skip_existing=F
             speaker_dirs.append(new_speaker_path)
         pcms = tmp_dir.glob("*.RAW")
         for pcm_path in pcms:
-            write(new_speaker_path.joinpath(os.path.splitext(os.path.basename(pcm_path))[0]) + ".wav", 16000, np.memmap(pcm_path, dtype='h', mode='r'))
+            write(os.path.join(new_speaker_path, os.path.splitext(os.path.basename(pcm_path))[0]) + ".wav", 16000, np.memmap(pcm_path, dtype='h', mode='r'))
 
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
