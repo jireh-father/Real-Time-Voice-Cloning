@@ -6,6 +6,7 @@ from encoder import audio
 from pathlib import Path
 from tqdm import tqdm
 import numpy as np
+from scipy.io.wavfile import write
 
 
 class DatasetLog:
@@ -201,5 +202,32 @@ def preprocess_speech_ko(datasets_root: Path, out_dir: Path, skip_existing=False
     # Get the speaker directories
     # Preprocess all speakers
     speaker_dirs = list(dataset_root.glob("*/"))
+    _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
+                             skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
+
+
+def preprocess_etri_8channel(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
+    dataset_name = "etri_voice_dataset"
+    dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
+    if not dataset_root:
+        return
+
+    # Get the speaker directories
+    # Preprocess all speakers
+    tmp_speaker_dirs = list(dataset_root.joinpath("8channel").glob("*/"))
+    new_path = dataset_root.joinpath("8channel_by_speaker")
+    speaker_dirs = []
+    if not new_path.is_dir():
+        new_path.mkdir()
+    for tmp_dir in tmp_speaker_dirs:
+        speaker_name = tmp_dir.basename()[5:8]
+        new_speaker_path = new_path.joinpath(speaker_name)
+        if not new_speaker_path.is_dir():
+            new_speaker_path.mkdir()
+            speaker_dirs.append(new_speaker_path)
+        pcms = tmp_dir.glob("*.RAW")
+        for pcm_path in pcms:
+            write(new_speaker_path.joinpath(pcm_path.basename().splitext()[0]) + ".wav", 16000, np.memmap(pcm_path, dtype='h', mode='r'))
+
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
