@@ -221,7 +221,7 @@ def preprocess_etri_8channel(datasets_root: Path, out_dir: Path, skip_existing=F
     if not new_path.is_dir():
         new_path.mkdir()
     for tmp_dir in tmp_speaker_dirs:
-        speaker_name = os.path.basename(tmp_dir)[5:8]
+        speaker_name = os.path.basename(tmp_dir)[5:9]
         new_speaker_path = new_path.joinpath(speaker_name)
         if not new_speaker_path.is_dir():
             new_speaker_path.mkdir()
