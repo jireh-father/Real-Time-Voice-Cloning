@@ -258,3 +258,43 @@ def preprocess_datatang(datasets_root: Path, out_dir: Path, skip_existing=False,
     speaker_dirs = [d for d in list(dataset_root.glob("*/")) if os.path.isdir(d)]
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
+
+def preprocess_etri_child(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
+    dataset_name = "etri_child"
+    # Initialize the preprocessing
+    dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
+    if not dataset_root:
+        return
+
+        # Preprocess all speakers
+    speaker_dirs = list(dataset_root.glob("*"))
+    _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "pcm",
+                             skip_existing, logger, num_processes=num_processes)
+
+def preprocess_etri_child(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
+    dataset_name = "etri_voice_dataset"
+    dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
+    if not dataset_root:
+        return
+
+    # Get the speaker directories
+    # Preprocess all speakers
+    tmp_speaker_dirs = list(dataset_root.joinpath("8channel").glob("*/"))
+    new_path = dataset_root.joinpath("8channel_by_speaker")
+    speaker_dirs = []
+    if not new_path.is_dir():
+        new_path.mkdir()
+    for tmp_dir in tmp_speaker_dirs:
+        if not os.path.isdir(tmp_dir):
+            continue
+        speaker_name = os.path.basename(tmp_dir)[5:9]
+        new_speaker_path = new_path.joinpath(speaker_name)
+        if not new_speaker_path.is_dir():
+            new_speaker_path.mkdir()
+            speaker_dirs.append(new_speaker_path)
+        pcms = tmp_dir.glob("*.RAW")
+        for pcm_path in pcms:
+            write(os.path.join(new_speaker_path, os.path.splitext(os.path.basename(pcm_path))[0]) + ".wav", 16000, np.memmap(pcm_path, dtype='h', mode='r'))
+
+    _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
+                             skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
