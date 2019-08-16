@@ -260,13 +260,13 @@ def preprocess_datatang(datasets_root: Path, out_dir: Path, skip_existing=False,
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
 
 def preprocess_etri_child(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
-    dataset_name = "etri_child"
+    dataset_name = "etri_voice_dataset"
     # Initialize the preprocessing
     dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
     if not dataset_root:
         return
 
         # Preprocess all speakers
-    speaker_dirs = list(dataset_root.glob("*"))
+    speaker_dirs = list(dataset_root.joinpath("child").glob("*"))
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "pcm",
                              skip_existing, logger, num_processes=num_processes)
