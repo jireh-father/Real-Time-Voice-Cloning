@@ -1,5 +1,5 @@
 from encoder.preprocess import preprocess_librispeech, preprocess_voxceleb1, preprocess_voxceleb2, preprocess_zeroth, \
-    preprocess_speech_ko, preprocess_etri_8channel
+    preprocess_speech_ko, preprocess_etri_8channel, preprocess_librispeech_clean
 from utils.argutils import print_args
 from pathlib import Path
 import argparse
@@ -52,6 +52,7 @@ if __name__ == "__main__":
     print_args(args, parser)
     preprocess_func = {
         "librispeech_other": preprocess_librispeech,
+        "librispeech_clean": preprocess_librispeech_clean,
         "voxceleb1": preprocess_voxceleb1,
         "voxceleb2": preprocess_voxceleb2,
         "zeroth": preprocess_zeroth,

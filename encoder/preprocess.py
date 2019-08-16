@@ -138,6 +138,18 @@ def preprocess_librispeech(datasets_root: Path, out_dir: Path, skip_existing=Fal
                                  skip_existing, logger, num_processes=num_processes)
 
 
+def preprocess_librispeech_clean(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
+    for dataset_name in librispeech_datasets["train"]["clean"]:
+        # Initialize the preprocessing
+        dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
+        if not dataset_root:
+            return
+
+            # Preprocess all speakers
+        speaker_dirs = list(dataset_root.glob("*"))
+        _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "flac",
+                                 skip_existing, logger, num_processes=num_processes)
+
 def preprocess_voxceleb1(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
     # Initialize the preprocessing
     dataset_name = "VoxCeleb1"
@@ -202,7 +214,7 @@ def preprocess_speech_ko(datasets_root: Path, out_dir: Path, skip_existing=False
 
     # Get the speaker directories
     # Preprocess all speakers
-    speaker_dirs = list(dataset_root.glob("*/"))
+    speaker_dirs = [d for d in list(dataset_root.glob("*/")) if os.path.isdir(d)]
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
 
@@ -221,6 +233,8 @@ def preprocess_etri_8channel(datasets_root: Path, out_dir: Path, skip_existing=F
     if not new_path.is_dir():
         new_path.mkdir()
     for tmp_dir in tmp_speaker_dirs:
+        if not os.path.isdir(tmp_dir):
+            continue
         speaker_name = os.path.basename(tmp_dir)[5:9]
         new_speaker_path = new_path.joinpath(speaker_name)
         if not new_speaker_path.is_dir():
