@@ -1,5 +1,6 @@
 from encoder.preprocess import preprocess_librispeech, preprocess_voxceleb1, preprocess_voxceleb2, preprocess_zeroth, \
-    preprocess_speech_ko, preprocess_etri_8channel, preprocess_librispeech_clean, preprocess_datatang, preprocess_etri_etc
+    preprocess_speech_ko, preprocess_etri_8channel, preprocess_librispeech_clean, preprocess_datatang, \
+    preprocess_etri_etc
 from utils.argutils import print_args
 from pathlib import Path
 import argparse
@@ -31,7 +32,8 @@ if __name__ == "__main__":
         "Path to the output directory that will contain the mel spectrograms. If left out, "
         "defaults to <datasets_root>/SV2TTS/encoder/")
     parser.add_argument("-d", "--datasets", type=str,
-                        default="librispeech_other,voxceleb1,voxceleb2", help= \
+                        default="librispeech_other,voxceleb1,voxceleb2,librispeech_clean,zeroth,speech_ko,etri_8channel,datatang,etri_etc",
+                        help= \
                             "Comma-separated list of the name of the datasets you want to preprocess. Only the train "
                             "set of these datasets will be used. Possible names: librispeech_other, voxceleb1, "
                             "voxceleb2.")
