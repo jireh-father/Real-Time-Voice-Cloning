@@ -1,5 +1,5 @@
 from encoder.preprocess import preprocess_librispeech, preprocess_voxceleb1, preprocess_voxceleb2, preprocess_zeroth, \
-    preprocess_speech_ko, preprocess_etri_8channel, preprocess_librispeech_clean
+    preprocess_speech_ko, preprocess_etri_8channel, preprocess_librispeech_clean, preprocess_datatang
 from utils.argutils import print_args
 from pathlib import Path
 import argparse
@@ -58,6 +58,7 @@ if __name__ == "__main__":
         "zeroth": preprocess_zeroth,
         "speech_ko": preprocess_speech_ko,
         "etri_8channel": preprocess_etri_8channel,
+        "datatang": preprocess_datatang,
     }
     args = vars(args)
     for dataset in args.pop("datasets"):

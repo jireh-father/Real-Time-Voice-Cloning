@@ -246,3 +246,15 @@ def preprocess_etri_8channel(datasets_root: Path, out_dir: Path, skip_existing=F
 
     _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
                              skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
+
+def preprocess_datatang(datasets_root: Path, out_dir: Path, skip_existing=False, num_processes=8):
+    dataset_name = "datatang"
+    dataset_root, logger = _init_preprocess_dataset(dataset_name, datasets_root, out_dir)
+    if not dataset_root:
+        return
+
+    # Get the speaker directories
+    # Preprocess all speakers
+    speaker_dirs = [d for d in list(dataset_root.glob("*/")) if os.path.isdir(d)]
+    _preprocess_speaker_dirs(speaker_dirs, dataset_name, datasets_root, out_dir, "wav",
+                             skip_existing, logger, num_processes=num_processes, speaker_dir_2_depth=False)
