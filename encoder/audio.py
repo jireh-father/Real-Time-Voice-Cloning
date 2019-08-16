@@ -6,12 +6,14 @@ import numpy as np
 import webrtcvad
 import librosa
 import struct
+from scipy.io.wavfile import write
+import os
 
 int16_max = (2 ** 15) - 1
 
 
 def preprocess_wav(fpath_or_wav: Union[str, Path, np.ndarray],
-                   source_sr: Optional[int] = None):
+                   source_sr: Optional[int] = None, extension="wav"):
     """
     Applies the preprocessing operations used in training the Speaker Encoder to a waveform 
     either on disk or in memory. The waveform will be resampled to match the data hyperparameters.
@@ -25,7 +27,14 @@ def preprocess_wav(fpath_or_wav: Union[str, Path, np.ndarray],
     """
     # Load the wav from disk if needed
     if isinstance(fpath_or_wav, str) or isinstance(fpath_or_wav, Path):
-        wav, source_sr = librosa.load(fpath_or_wav, sr=None)
+        if extension in ["pcm", "RAW"]:
+            data = np.memmap(fpath_or_wav, dtype='h', mode='r')
+            out_file_path = str(fpath_or_wav) + ".wav"
+            write(out_file_path, 16000, data)
+            wav, source_sr = librosa.load(out_file_path, sr=None)
+            os.unlink(out_file_path)
+        else:
+            wav, source_sr = librosa.load(fpath_or_wav, sr=None)
     else:
         wav = fpath_or_wav
     

@@ -39,6 +39,7 @@ if __name__ == "__main__":
         "Whether to skip existing output files with the same name. Useful if this script was "
         "interrupted.")
     parser.add_argument("-p", "--num_processes", type=int, default=8)
+    parser.add_argument("-u", "--use_short_data", action="store_true", type=bool, default=True)
     args = parser.parse_args()
 
     # Process the arguments

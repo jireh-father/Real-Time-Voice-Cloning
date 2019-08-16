@@ -18,6 +18,9 @@ class Utterance:
         partial utterance in the complete utterance.
         """
         frames = self.get_frames()
+        while frames.shape[0] < n_frames:
+            frames = np.concatenate((frames, frames), axis=0)
+
         if frames.shape[0] == n_frames:
             start = 0
         else:
