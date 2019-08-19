@@ -46,9 +46,9 @@ def preprocess_librispeech(datasets_root: Path, out_dir: Path, n_processes: int,
     hours = (timesteps / sample_rate) / 3600
     print("The dataset consists of %d utterances, %d mel frames, %d audio timesteps (%.2f hours)." %
           (len(metadata), mel_frames, timesteps, hours))
-    print("Max input length (text chars): %d" % max(len(m[5]) for m in metadata))
-    print("Max mel frames length: %d" % max(int(m[4]) for m in metadata))
-    print("Max audio timesteps length: %d" % max(int(m[3]) for m in metadata))
+    print("Max input length (text chars): %d" % max([len(m[5]) for m in metadata]))
+    print("Max mel frames length: %d" % max([int(m[4]) for m in metadata]))
+    print("Max audio timesteps length: %d" % max([int(m[3]) for m in metadata]))
 
 
 def preprocess_speaker(speaker_dir, out_dir: Path, skip_existing: bool, hparams):
