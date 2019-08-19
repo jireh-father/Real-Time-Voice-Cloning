@@ -15,14 +15,14 @@ def sync(device: torch.device):
 
 def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int, save_every: int,
           backup_every: int, vis_every: int, force_restart: bool, visdom_server: str,
-          no_visdom: bool):
+          no_visdom: bool, num_workers=8):
     # Create a dataset and a dataloader
     dataset = SpeakerVerificationDataset(clean_data_root)
     loader = SpeakerVerificationDataLoader(
         dataset,
         speakers_per_batch,
         utterances_per_speaker,
-        num_workers=8,
+        num_workers=num_workers,
     )
     
     # Setup the device on which to run the forward pass and the loss. These can be different, 
