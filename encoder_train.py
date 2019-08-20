@@ -37,8 +37,9 @@ if __name__ == "__main__":
     parser.add_argument("--no_visdom", action="store_true", help= \
         "Disable visdom.")
     parser.add_argument("-n", "--num_workers", type=int, default=8, help="num_workers")
+    parser.add_argument("--prefix_list_str", type=str, default=None)
     args = parser.parse_args()
-    
+
     # Process the arguments
     args.models_dir.mkdir(exist_ok=True)
     
