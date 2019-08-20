@@ -17,7 +17,7 @@ class SpeakerVerificationDataset(Dataset):
             prefix_list = prefix_list_str.split(",")
             for prefix_str in prefix_list:
                 speaker_dirs += [f for f in self.root.glob(prefix_str + "*") if f.is_dir()]
-            print("speaker_dirs", len(speaker_dirs))
+        print("speaker_dirs", len(speaker_dirs))
         if len(speaker_dirs) == 0:
             raise Exception("No speakers found. Make sure you are pointing to the directory "
                             "containing all preprocessed speaker directories.")
