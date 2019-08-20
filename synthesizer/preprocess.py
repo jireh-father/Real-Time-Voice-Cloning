@@ -229,8 +229,7 @@ def embed_utterance_custom_dataset(fpaths, encoder_model_fpath, output_dir):
         encoder.load_model(encoder_model_fpath)
 
     # Compute the speaker embedding of the utterance
-    wav = np.load(fpaths)
-    wav = encoder.preprocess_wav(wav)
+    wav = encoder.preprocess_wav(fpaths)
     embed = encoder.embed_utterance(wav)
     np.save(os.path.join(output_dir, fpaths.split("/")[-1] + ".npy"), embed, allow_pickle=False)
 
