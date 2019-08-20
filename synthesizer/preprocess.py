@@ -8,6 +8,7 @@ from utils import logmmse
 from tqdm import tqdm
 import numpy as np
 import librosa
+import os
 
 
 def preprocess_librispeech(datasets_root: Path, out_dir: Path, n_processes: int, 
@@ -222,4 +223,29 @@ def create_embeddings(synthesizer_root: Path, encoder_model_fpath: Path, n_proce
     func = partial(embed_utterance, encoder_model_fpath=encoder_model_fpath)
     job = Pool(n_processes).imap(func, fpaths)
     list(tqdm(job, "Embedding", len(fpaths), unit="utterances"))
-    
+
+def embed_utterance_custom_dataset(fpaths, encoder_model_fpath, output_dir):
+    if not encoder.is_loaded():
+        encoder.load_model(encoder_model_fpath)
+
+    # Compute the speaker embedding of the utterance
+    wav = np.load(fpaths)
+    wav = encoder.preprocess_wav(wav)
+    embed = encoder.embed_utterance(wav)
+    np.save(os.path.join(output_dir, fpaths.split("/")[-1] + ".npy"), embed, allow_pickle=False)
+
+def create_embeddings_custom_dataset(synthesizer_root: Path, encoder_model_fpath: Path, n_processes: int,
+                                     output_dir: str, target_files: str):
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+
+    # Gather the input wave filepath and the target output embed filepath
+    for target_file in target_files:
+        with open(target_file) as metadata_file:
+            fpaths = [line.split("|")[0] for line in metadata_file]
+
+    # TODO: improve on the multiprocessing, it's terrible. Disk I/O is the bottleneck here.
+    # Embed the utterances in separate threads
+    func = partial(embed_utterance_custom_dataset, encoder_model_fpath=encoder_model_fpath, output_dir=output_dir)
+    job = Pool(n_processes).imap(func, fpaths)
+    list(tqdm(job, "Embedding", len(fpaths), unit="utterances"))
