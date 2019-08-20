@@ -239,6 +239,7 @@ def create_embeddings_custom_dataset(encoder_model_fpath: Path, n_processes: int
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 
+    target_files = target_files.split(",")
     # Gather the input wave filepath and the target output embed filepath
     for target_file in target_files:
         with open(target_file) as metadata_file:
