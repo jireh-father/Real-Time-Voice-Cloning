@@ -44,6 +44,7 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--num_processes", type=int, default=8)
     parser.add_argument("-u", "--use_short_data", type=bool, default=True)
     args = parser.parse_args()
+    print("use_short_data", args.use_short_data)
 
     # Process the arguments
     args.datasets = args.datasets.split(",")
