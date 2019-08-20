@@ -234,7 +234,7 @@ def embed_utterance_custom_dataset(fpaths, encoder_model_fpath, output_dir):
     embed = encoder.embed_utterance(wav)
     np.save(os.path.join(output_dir, fpaths.split("/")[-1] + ".npy"), embed, allow_pickle=False)
 
-def create_embeddings_custom_dataset(synthesizer_root: Path, encoder_model_fpath: Path, n_processes: int,
+def create_embeddings_custom_dataset(encoder_model_fpath: Path, n_processes: int,
                                      output_dir: str, target_files: str):
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
