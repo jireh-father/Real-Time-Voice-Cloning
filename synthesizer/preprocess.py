@@ -232,7 +232,7 @@ def embed_utterance_custom_dataset(fpaths, encoder_model_fpath, output_dir):
     wav = np.load(fpaths)
     wav = encoder.preprocess_wav(wav)
     embed = encoder.embed_utterance(wav)
-    np.save(os.path.join(output_dir, fpaths.split("/")[-1] + ".npy"), embed)#, allow_pickle=False)
+    np.save(os.path.join(output_dir, fpaths.split("/")[-1] + ".npy"), embed, allow_pickle=False)
 
 def create_embeddings_custom_dataset(encoder_model_fpath: Path, n_processes: int,
                                      output_dir: str, target_files: str):
