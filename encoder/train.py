@@ -83,7 +83,6 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
             print("No model \"%s\" found, starting training from scratch." % run_id)
     else:
         print("Starting the training from scratch.")
-    model.train()
 
     # Initialize the visualization environment
     vis = Visualizations(run_id, vis_every, server=visdom_server, disabled=no_visdom)
@@ -95,6 +94,7 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
     # Training loop
     profiler = Profiler(summarize_every=10, disabled=False)
     for epoch in range(1, num_epochs + 1):
+        model.train()
         total_loss = []
         total_eer = []
         for step, speaker_batch in enumerate(train_loader, init_step):
@@ -169,6 +169,7 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
 
         total_loss = []
         total_eer = []
+        model.eval()
         for step, speaker_batch in enumerate(test_loader):
             inputs = torch.from_numpy(speaker_batch.data).to(device)
             embeds = model(inputs)
