@@ -4,28 +4,25 @@ from encoder.data_objects.speaker import Speaker
 from encoder.params_data import partials_n_frames
 from torch.utils.data import Dataset, DataLoader
 from pathlib import Path
+import glob
+import os
 
 # TODO: improve with a pool of speakers for data efficiency
 
 class SpeakerVerificationDataset(Dataset):
-    def __init__(self, datasets_root: Path, prefix_list_str=None):
-        self.root = datasets_root
-        if prefix_list_str is None:
-            speaker_dirs = [f for f in self.root.glob("*") if f.is_dir()]
-        else:
-            speaker_dirs = []
-            prefix_list = prefix_list_str.split(",")
-            for prefix_str in prefix_list:
-                speaker_dirs += [f for f in self.root.glob(prefix_str + "*") if f.is_dir()]
+    def __init__(self, speaker_dirs):
         print("speaker_dirs", len(speaker_dirs))
         if len(speaker_dirs) == 0:
             raise Exception("No speakers found. Make sure you are pointing to the directory "
                             "containing all preprocessed speaker directories.")
+        self.total_cnt = 0
+        for speaker_dir in speaker_dirs:
+            self.total_cnt += len(glob.glob(os.path.join(speaker_dir, "*.npy")))
         self.speakers = [Speaker(speaker_dir) for speaker_dir in speaker_dirs]
         self.speaker_cycler = RandomCycler(self.speakers)
 
     def __len__(self):
-        return int(1e10)
+        return self.total_cnt#int(1e10)
         
     def __getitem__(self, index):
         return next(self.speaker_cycler)
