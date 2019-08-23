@@ -94,7 +94,7 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
 
     # Training loop
     profiler = Profiler(summarize_every=10, disabled=False)
-    for epoch in range(1, range(num_epochs + 1)):
+    for epoch in range(1, num_epochs + 1):
         total_loss = []
         total_eer = []
         for step, speaker_batch in enumerate(train_loader, init_step):
