@@ -18,6 +18,7 @@ class SpeakerVerificationDataset(Dataset):
         self.total_cnt = 0
         for speaker_dir in speaker_dirs:
             self.total_cnt += len(glob.glob(os.path.join(speaker_dir, "*.npy")))
+        print("total items", self.total_cnt)
         self.speakers = [Speaker(speaker_dir) for speaker_dir in speaker_dirs]
         self.speaker_cycler = RandomCycler(self.speakers)
 
