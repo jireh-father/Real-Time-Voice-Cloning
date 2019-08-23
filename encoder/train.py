@@ -174,7 +174,7 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
             inputs = torch.from_numpy(speaker_batch.data).to(device)
             embeds = model(inputs)
             embeds_loss = embeds.view((speakers_per_batch, utterances_per_speaker, -1)).to(loss_device)
-            loss, eer = model.loss(embeds_loss)
+            loss, eer = model.eval_loss(embeds_loss)
             total_loss.append(loss)
             total_eer.append(eer)
         print(
