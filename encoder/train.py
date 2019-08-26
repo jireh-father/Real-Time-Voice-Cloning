@@ -109,8 +109,7 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
             profiler.tick("Forward pass")
             embeds_loss = embeds.view((speakers_per_batch, utterances_per_speaker, -1)).to(loss_device)
             loss, eer = model.loss(embeds_loss)
-            total_loss.append(loss)
-            total_eer.append(eer)
+
             sync(loss_device)
             profiler.tick("Loss")
 
@@ -125,6 +124,8 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
             # Update visualizations
             # learning_rate = optimizer.param_groups[0]["lr"]
             vis.update(loss.item(), eer, step)
+            total_loss.append(loss.item())
+            total_eer.append(eer)
 
             # Draw projections and save them to the backup folder
             if umap_every != 0 and step % umap_every == 0:
@@ -170,12 +171,13 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
         total_loss = []
         total_eer = []
         model.eval()
-        for step, speaker_batch in enumerate(test_loader):
-            inputs = torch.from_numpy(speaker_batch.data).to(device)
-            embeds = model(inputs)
-            embeds_loss = embeds.view((speakers_per_batch, utterances_per_speaker, -1)).to(loss_device)
-            loss, eer = model.eval_loss(embeds_loss)
-            total_loss.append(loss)
-            total_eer.append(eer)
-        print(
-            "epoch %d: avg val loss: %4f, avg val eer: %4f" % (epoch, np.array(total_loss).mean(), np.array(total_eer).mean()))
+        with torch.no_grad():
+            for step, speaker_batch in enumerate(test_loader):
+                inputs = torch.from_numpy(speaker_batch.data).to(device)
+                embeds = model(inputs)
+                embeds_loss = embeds.view((speakers_per_batch, utterances_per_speaker, -1)).to(loss_device)
+                loss, eer = model.eval_loss(embeds_loss)
+                total_loss.append(loss.item())
+                total_eer.append(eer)
+            print(
+                "epoch %d: avg val loss: %4f, avg val eer: %4f" % (epoch, np.array(total_loss).mean(), np.array(total_eer).mean()))
