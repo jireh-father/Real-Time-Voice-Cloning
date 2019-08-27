@@ -108,7 +108,11 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
             sync(device)
             profiler.tick("Forward pass")
             embeds_loss = embeds.view((speakers_per_batch, utterances_per_speaker, -1)).to(loss_device)
-            loss, eer = model.loss(embeds_loss)
+            try:
+                loss, eer = model.loss(embeds_loss)
+            except:
+                print("wow. an error when calculating losses in training.")
+                continue
 
             sync(loss_device)
             profiler.tick("Loss")
@@ -176,7 +180,11 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
                 inputs = torch.from_numpy(speaker_batch.data).to(device)
                 embeds = model(inputs)
                 embeds_loss = embeds.view((speakers_per_batch, utterances_per_speaker, -1)).to(loss_device)
-                loss, eer = model.eval_loss(embeds_loss)
+                try:
+                    loss, eer = model.eval_loss(embeds_loss)
+                except:
+                    print("wow. an error when calculating losses.")
+                    continue
                 total_loss.append(loss.item())
                 total_eer.append(eer)
             print(
