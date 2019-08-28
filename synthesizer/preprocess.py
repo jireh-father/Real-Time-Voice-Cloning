@@ -243,7 +243,7 @@ def create_embeddings_custom_dataset(encoder_model_fpath: Path, n_processes: int
     fpaths = []
     for target_file in target_files:
         with open(target_file) as metadata_file:
-            fpaths += [line.split("|")[0] for line in metadata_file]
+            fpaths += [line.strip().split("|")[0] for line in metadata_file]
 
     # TODO: improve on the multiprocessing, it's terrible. Disk I/O is the bottleneck here.
     # Embed the utterances in separate threads
