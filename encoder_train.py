@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--models_dir", type=Path, default="encoder/saved_models/", help=\
         "Path to the output directory that will contain the saved model weights, as well as "
         "backups of those weights and plots generated during training.")
-    parser.add_argument("-r", "--restore_file", type=Path, default="encoder/saved_models/", help= \
+    parser.add_argument("-r", "--restore_file", type=Path, default=None, help= \
         "Path to the output directory that will contain the saved model weights, as well as "
         "backups of those weights and plots generated during training.")
     parser.add_argument("-v", "--vis_every", type=int, default=10, help= \
