@@ -187,5 +187,12 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
                     continue
                 total_loss.append(loss.item())
                 total_eer.append(eer)
+                if umap_every != 0 and step % umap_every == 0:
+                    print("Drawing and saving projections (step %d)" % step)
+                    backup_dir.mkdir(exist_ok=True)
+                    projection_fpath = backup_dir.joinpath("%s_valid_umap_%06d.png" % (run_id, step))
+                    embeds = embeds.detach().cpu().numpy()
+                    vis.draw_projections(embeds, utterances_per_speaker, step, projection_fpath)
+                    vis.save()
             print(
                 "epoch %d: avg val loss: %4f, avg val eer: %4f" % (epoch, np.array(total_loss).mean(), np.array(total_eer).mean()))
