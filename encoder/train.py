@@ -127,7 +127,6 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
 
             # Update visualizations
             # learning_rate = optimizer.param_groups[0]["lr"]
-            vis.update(loss.item(), eer, step)
             total_loss.append(loss.item())
             total_eer.append(eer)
 
