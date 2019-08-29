@@ -19,7 +19,7 @@ def sync(device: torch.device):
 
 def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int, save_every: int,
           backup_every: int, vis_every: int, force_restart: bool, visdom_server: str,
-          no_visdom: bool, num_workers=8, prefix_list_str=None, num_epochs=100):
+          no_visdom: bool, num_workers=8, prefix_list_str=None, num_epochs=100, restore_file=None):
     # Create a dataset and a dataloader
     random.seed(1)
     if prefix_list_str is None:
@@ -76,6 +76,13 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
         if state_fpath.exists():
             print("Found existing model \"%s\", loading it and resuming training." % run_id)
             checkpoint = torch.load(state_fpath)
+            model.load_state_dict(checkpoint["model_state"])
+            optimizer.load_state_dict(checkpoint["optimizer_state"])
+            optimizer.param_groups[0]["lr"] = learning_rate_init
+        elif restore_file is not None:
+            restore_path = models_dir.joinpath(restore_file)
+            print("Found existing model \"%s\", loading it and resuming training." % restore_file)
+            checkpoint = torch.load(restore_path)
             model.load_state_dict(checkpoint["model_state"])
             optimizer.load_state_dict(checkpoint["optimizer_state"])
             optimizer.param_groups[0]["lr"] = learning_rate_init
