@@ -12,7 +12,7 @@ import numpy as np
 import time
 
 
-def train(run_id, mel_dir, audio_dir, models_dir: Path, ground_truth: bool,
+def train(run_id, mel_dir, audio_dir, models_dir: Path,
           save_every: int, backup_every: int, force_restart: bool):
     # Check to make sure the hop length is correctly factorised
     assert np.cumprod(hp.voc_upsample_factors)[-1] == hp.hop_length
