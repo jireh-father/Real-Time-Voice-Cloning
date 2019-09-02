@@ -15,9 +15,6 @@ if __name__ == "__main__":
         "Name for this model instance. If a model state from the same run ID was previously "
         "saved, the training will restart from there. Pass -f to overwrite saved states and "
         "restart from scratch.")
-    parser.add_argument("datasets_root", type=str, help= \
-        "Path to the directory containing your SV2TTS directory. Specifying --syn_dir or --voc_dir "
-        "will take priority over this argument.")
     parser.add_argument("--mel_dir", type=str, default="/home/ilseo/dataset/mels_aihub_datatang_speechko_zeroth", help= \
         "Path to the synthesizer directory that contains the ground truth mel spectrograms, "
         "the wavs and the embeds. Defaults to <datasets_root>/SV2TTS/synthesizer/.")
@@ -38,7 +35,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Process the arguments
-    del args.datasets_root
     args.models_dir = Path(args.models_dir)
     args.models_dir.mkdir(exist_ok=True)
 
