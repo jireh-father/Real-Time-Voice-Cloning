@@ -4,29 +4,23 @@ from vocoder import audio
 import vocoder.hparams as hp
 import numpy as np
 import torch
-
+import glob
+import os
 
 class VocoderDataset(Dataset):
-    def __init__(self, metadata_fpath: Path, mel_dir: Path, wav_dir: Path):
-        print("Using inputs from:\n\t%s\n\t%s\n\t%s" % (metadata_fpath, mel_dir, wav_dir))
-        
-        with metadata_fpath.open("r") as metadata_file:
-            metadata = [line.split("|") for line in metadata_file]
-        
-        gta_fnames = [x[1] for x in metadata if int(x[4])]
-        gta_fpaths = [mel_dir.joinpath(fname) for fname in gta_fnames]
-        wav_fnames = [x[0] for x in metadata if int(x[4])]
-        wav_fpaths = [wav_dir.joinpath(fname) for fname in wav_fnames]
-        self.samples_fpaths = list(zip(gta_fpaths, wav_fpaths))
-        
+    def __init__(self, mel_dir, wav_dir):
+        self.samples_fpaths = [os.path.splitext(path)[0] for path in glob.glob(os.path.join(mel_dir, "*.pt"))]
+
         print("Found %d samples" % len(self.samples_fpaths))
     
-    def __getitem__(self, index):  
-        mel_path, wav_path = self.samples_fpaths[index]
-        
+    def __getitem__(self, index):
+        mel_path = self.samples_fpaths[index] + ".pt"
+        wav_path = self.samples_fpaths[index] + ".npy"
+
         # Load the mel spectrogram and adjust its range to [-1, 1]
-        mel = np.load(mel_path).T.astype(np.float32) / hp.mel_max_abs_value
-        
+        # mel = np.load(mel_path).T.astype(np.float32) / hp.mel_max_abs_value
+        mel = torch.load(mel_path).numpy()
+
         # Load the wav
         wav = np.load(wav_path)
         if hp.apply_preemphasis:

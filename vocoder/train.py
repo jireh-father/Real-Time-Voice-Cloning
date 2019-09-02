@@ -12,7 +12,7 @@ import numpy as np
 import time
 
 
-def train(run_id: str, syn_dir: Path, voc_dir: Path, models_dir: Path, ground_truth: bool,
+def train(run_id, mel_dir, audio_dir, models_dir: Path, ground_truth: bool,
           save_every: int, backup_every: int, force_restart: bool):
     # Check to make sure the hop length is correctly factorised
     assert np.cumprod(hp.voc_upsample_factors)[-1] == hp.hop_length
@@ -53,11 +53,7 @@ def train(run_id: str, syn_dir: Path, voc_dir: Path, models_dir: Path, ground_tr
         print("WaveRNN weights loaded from step %d" % model.step)
     
     # Initialize the dataset
-    metadata_fpath = syn_dir.joinpath("train.txt") if ground_truth else \
-        voc_dir.joinpath("synthesized.txt")
-    mel_dir = syn_dir.joinpath("mels") if ground_truth else voc_dir.joinpath("mels_gta")
-    wav_dir = syn_dir.joinpath("audio")
-    dataset = VocoderDataset(metadata_fpath, mel_dir, wav_dir)
+    dataset = VocoderDataset(mel_dir, audio_dir)
     test_loader = DataLoader(dataset,
                              batch_size=1,
                              shuffle=True,
