@@ -9,13 +9,15 @@ import os
 
 class VocoderDataset(Dataset):
     def __init__(self, mel_dir, wav_dir):
-        self.samples_fpaths = [os.path.splitext(path)[0] for path in glob.glob(os.path.join(mel_dir, "*.pt"))]
+        self.samples_fpaths = [os.path.splitext(os.path.basename(path))[0] for path in glob.glob(os.path.join(mel_dir, "*.pt"))]
+        self.wav_dir = wav_dir
+        self.mel_dir = mel_dir
 
         print("Found %d samples" % len(self.samples_fpaths))
     
     def __getitem__(self, index):
-        mel_path = self.samples_fpaths[index] + ".pt"
-        wav_path = self.samples_fpaths[index] + ".npy"
+        mel_path = os.path.join(self.mel_dir, self.samples_fpaths[index] + ".pt")
+        wav_path = os.path.join(self.wav_dir, self.samples_fpaths[index] + ".npy")
 
         # Load the mel spectrogram and adjust its range to [-1, 1]
         # mel = np.load(mel_path).T.astype(np.float32) / hp.mel_max_abs_value
