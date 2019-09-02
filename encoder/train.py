@@ -196,7 +196,7 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
                 if umap_every != 0 and step % umap_every == 0:
                     print("Drawing and saving projections (step %d)" % step)
                     backup_dir.mkdir(exist_ok=True)
-                    projection_fpath = backup_dir.joinpath("%s_valid_umap_%06d.png" % (run_id, step))
+                    projection_fpath = backup_dir.joinpath("%s_%d_epoch_valid_umap_%06d.png" % (run_id, epoch, step))
                     embeds = embeds.detach().cpu().numpy()
                     vis.draw_projections(embeds, utterances_per_speaker, step, projection_fpath)
                     vis.save()
