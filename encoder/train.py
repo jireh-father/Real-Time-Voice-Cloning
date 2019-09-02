@@ -137,6 +137,8 @@ def train(run_id: str, clean_data_root: Path, models_dir: Path, umap_every: int,
             total_loss.append(loss.item())
             total_eer.append(eer)
 
+            vis.update(loss.item(), eer, step)
+
             # Draw projections and save them to the backup folder
             if umap_every != 0 and step % umap_every == 0:
                 print("Drawing and saving projections (step %d)" % step)
