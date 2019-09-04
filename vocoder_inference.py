@@ -66,7 +66,7 @@ if __name__ == '__main__':
             melspec = torch.load(mel_path)
             # Synthesizing the waveform is fairly straightforward. Remember that the longer the
             # spectrogram, the more time-efficient the vocoder.
-            generated_wav = vocoder.infer_waveform(melspec)
+            generated_wav = vocoder.infer_waveform(melspec.unsqueeze(0))
 
             ## Post-generation
             # There's a bug with sounddevice that makes the audio cut one second earlier, so we
