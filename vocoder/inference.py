@@ -37,7 +37,7 @@ def is_loaded():
 
 
 def infer_waveform(mel, normalize=True,  batched=True, target=8000, overlap=800, 
-                   progress_callback=None):
+                   progress_callback=None, from_numpy=True):
     """
     Infers the waveform of a mel spectrogram output by the synthesizer (the format must match 
     that of the synthesizer!)
@@ -51,8 +51,8 @@ def infer_waveform(mel, normalize=True,  batched=True, target=8000, overlap=800,
     if _model is None:
         raise Exception("Please load Wave-RNN in memory before using it")
     
-    # if normalize:
-    #     mel = mel / hp.mel_max_abs_value
-    # mel = torch.from_numpy(mel[None, ...])
+    if normalize:
+        mel = mel / hp.mel_max_abs_value
+    mel = torch.from_numpy(mel[None, ...])
     wav = _model.generate(mel, batched, target, overlap, hp.mu_law, progress_callback)
     return wav
