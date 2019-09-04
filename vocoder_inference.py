@@ -1,14 +1,10 @@
-from encoder.params_model import model_embedding_size as speaker_embedding_size
 from utils.argutils import print_args
-from synthesizer.inference import Synthesizer
-from encoder import inference as encoder
 from vocoder import inference as vocoder
-from pathlib import Path
 import numpy as np
 import librosa
 import argparse
 import torch
-import sys
+import traceback
 
 if __name__ == '__main__':
     ## Info & args
@@ -86,5 +82,6 @@ if __name__ == '__main__':
 
 
         except Exception as e:
+            print(traceback.print_exc())
             print("Caught exception: %s" % repr(e))
             print("Restarting\n")
