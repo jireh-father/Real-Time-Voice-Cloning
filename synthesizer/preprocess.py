@@ -210,7 +210,7 @@ def split_on_silences(wav_fpath, words, end_times, hparams):
     return wavs, texts
     
     
-def process_utterance(wav: np.ndarray, text: str, out_dir: Path, basename: str, 
+def process_utterance(wav: np.ndarray, text: str, out_dir, basename: str,
                       skip_existing: bool, hparams):
     ## FOR REFERENCE:
     # For you not to lose your head if you ever wish to change things here or implement your own
@@ -226,9 +226,9 @@ def process_utterance(wav: np.ndarray, text: str, out_dir: Path, basename: str,
     
     
     # Skip existing utterances if needed
-    mel_fpath = out_dir.joinpath("mels", "mel-%s.npy" % basename)
-    wav_fpath = out_dir.joinpath("audio", "audio-%s.npy" % basename)
-    if skip_existing and mel_fpath.exists() and wav_fpath.exists():
+    mel_fpath = os.path.join(out_dir, "mels", "mel-%s.npy" % basename)
+    wav_fpath = os.path.join(out_dir, "audio", "audio-%s.npy" % basename)
+    if skip_existing and os.path.exists(mel_fpath) and os.path.exists(wav_fpath):
         return None
     
     # Skip utterances that are too short
@@ -248,7 +248,7 @@ def process_utterance(wav: np.ndarray, text: str, out_dir: Path, basename: str,
     np.save(wav_fpath, wav, allow_pickle=False)
     
     # Return a tuple describing this training example
-    return wav_fpath.name, mel_fpath.name, "embed-%s.npy" % basename, len(wav), mel_frames, text
+    return os.path.basename(wav_fpath), os.path.basename(mel_fpath), "embed-%s.npy" % basename, len(wav), mel_frames, text
  
  
 def embed_utterance(fpaths, encoder_model_fpath):
