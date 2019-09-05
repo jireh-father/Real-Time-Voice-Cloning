@@ -78,8 +78,9 @@ def preprocess_custom(dataset_path, out_dir, n_processes: int,
     func = partial(preprocess_sample, out_dir=out_dir, skip_existing=skip_existing,
                    hparams=hparams)
     job = Pool(n_processes).imap(func, sample_list)
-    for tmp_metadata in tqdm(job, "CustomSynthDataset", len(sample_list), unit="samples"):
-        metadata_file.write("|".join(str(x) for x in tmp_metadata) + "\n")
+    for speaker_metadata in tqdm(job, "CustomSynthDataset", len(sample_list), unit="samples"):
+        for metadatum in speaker_metadata:
+            metadata_file.write("|".join(str(x) for x in metadatum) + "\n")
     metadata_file.close()
 
     # Verify the contents of the metadata file
@@ -126,6 +127,7 @@ def preprocess_speaker(speaker_dir, out_dir: Path, skip_existing: bool, hparams)
 
 def preprocess_sample(sample_line, out_dir: Path, skip_existing: bool, hparams):
     # Iterate over each entry in the alignments file
+    metadata = []
     wav_fpath, script = sample_line.split("|")
 
     # Process each sub-utterance
@@ -134,8 +136,9 @@ def preprocess_sample(sample_line, out_dir: Path, skip_existing: bool, hparams):
         wav = wav / np.abs(wav).max() * hparams.rescaling_max
 
     sub_basename = os.path.splitext(os.path.basename(wav_fpath))[0]
-    return process_utterance(wav, script, out_dir, sub_basename,
-                                      skip_existing, hparams)
+    metadata.append(process_utterance(wav, script, out_dir, sub_basename,skip_existing, hparams))
+
+    return [m for m in metadata if m is not None]
 
 
 def split_on_silences(wav_fpath, words, end_times, hparams):
