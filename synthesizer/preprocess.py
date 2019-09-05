@@ -127,7 +127,6 @@ def preprocess_speaker(speaker_dir, out_dir: Path, skip_existing: bool, hparams)
 def preprocess_sample(sample_line, out_dir: Path, skip_existing: bool, hparams):
     # Iterate over each entry in the alignments file
     wav_fpath, script = sample_line.split("|")
-    assert wav_fpath.exists()
 
     # Process each sub-utterance
     wav, _ = librosa.load(wav_fpath, hparams.sample_rate)
