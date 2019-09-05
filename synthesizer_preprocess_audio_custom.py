@@ -26,13 +26,6 @@ if __name__ == "__main__":
         "Hyperparameter overrides as a comma-separated list of name-value pairs")
     args = parser.parse_args()
     
-    # Process the arguments
-    if not hasattr(args, "out_dir"):
-        args.out_dir = args.datasets_root.joinpath("SV2TTS", "synthesizer")
-
-    # Create directories
-    assert args.datasets_root.exists()
-    args.out_dir.mkdir(exist_ok=True, parents=True)
 
     # Preprocess the dataset
     print_args(args, parser)
