@@ -9,6 +9,7 @@ from tqdm import tqdm
 import numpy as np
 import librosa
 import os
+import glob
 
 
 def preprocess_librispeech(datasets_root: Path, out_dir: Path, n_processes: int, 
@@ -52,6 +53,44 @@ def preprocess_librispeech(datasets_root: Path, out_dir: Path, n_processes: int,
     print("Max audio timesteps length: %d" % max(int(m[3]) for m in metadata))
 
 
+def preprocess_custom(dataset_path, out_dir, n_processes: int,
+                           skip_existing: bool, hparams):
+    # Gather the input directories
+    dataset_file = open(dataset_path, "utf-8")
+    sample_list = []
+    for line in dataset_file:
+        if line:
+            sample_list.append(line.strip())
+
+    # Create the output directories for each output file type
+    out_dir.joinpath("mels").mkdir(exist_ok=True)
+    out_dir.joinpath("audio").mkdir(exist_ok=True)
+
+    # Create a metadata file
+    metadata_fpath = out_dir.joinpath("train.txt")
+    metadata_file = metadata_fpath.open("a" if skip_existing else "w", encoding="utf-8")
+
+    # Preprocess the dataset
+    func = partial(preprocess_sample, out_dir=out_dir, skip_existing=skip_existing,
+                   hparams=hparams)
+    job = Pool(n_processes).imap(func, sample_list)
+    for tmp_metadata in tqdm(job, "CustomSynthDataset", len(sample_list), unit="samples"):
+        metadata_file.write("|".join(str(x) for x in tmp_metadata) + "\n")
+    metadata_file.close()
+
+    # Verify the contents of the metadata file
+    with metadata_fpath.open("r", encoding="utf-8") as metadata_file:
+        metadata = [line.split("|") for line in metadata_file]
+    mel_frames = sum([int(m[4]) for m in metadata])
+    timesteps = sum([int(m[3]) for m in metadata])
+    sample_rate = hparams.sample_rate
+    hours = (timesteps / sample_rate) / 3600
+    print("The dataset consists of %d utterances, %d mel frames, %d audio timesteps (%.2f hours)." %
+          (len(metadata), mel_frames, timesteps, hours))
+    print("Max input length (text chars): %d" % max(len(m[5]) for m in metadata))
+    print("Max mel frames length: %d" % max(int(m[4]) for m in metadata))
+    print("Max audio timesteps length: %d" % max(int(m[3]) for m in metadata))
+
 def preprocess_speaker(speaker_dir, out_dir: Path, skip_existing: bool, hparams):
     metadata = []
     for book_dir in speaker_dir.glob("*"):
@@ -79,6 +118,21 @@ def preprocess_speaker(speaker_dir, out_dir: Path, skip_existing: bool, hparams)
                                                   skip_existing, hparams))
     
     return [m for m in metadata if m is not None]
+
+
+def preprocess_sample(sample_line, out_dir: Path, skip_existing: bool, hparams):
+    # Iterate over each entry in the alignments file
+    wav_fpath, script = sample_line.split("|")
+    assert wav_fpath.exists()
+
+    # Process each sub-utterance
+    wav, _ = librosa.load(wav_fpath, hparams.sample_rate)
+    if hparams.rescale:
+        wav = wav / np.abs(wav).max() * hparams.rescaling_max
+
+    sub_basename = os.path.splitext(os.path.basename(wav_fpath))[0]
+    return process_utterance(wav, script, out_dir, sub_basename,
+                                      skip_existing, hparams)
 
 
 def split_on_silences(wav_fpath, words, end_times, hparams):
