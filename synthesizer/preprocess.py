@@ -56,7 +56,7 @@ def preprocess_librispeech(datasets_root: Path, out_dir: Path, n_processes: int,
 def preprocess_custom(dataset_path, out_dir, n_processes: int,
                            skip_existing: bool, hparams):
     # Gather the input directories
-    dataset_file = open(dataset_path, "utf-8")
+    dataset_file = open(dataset_path, encoding="utf-8")
     sample_list = []
     for line in dataset_file:
         if line:
