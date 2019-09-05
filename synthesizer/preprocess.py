@@ -61,7 +61,7 @@ def preprocess_custom(dataset_path, out_dir, n_processes: int,
     for line in dataset_file:
         if line:
             sample_list.append(line.strip())
-
+    dataset_file.close()
     # Create the output directories for each output file type
     mels_dir = os.path.join(out_dir, "mels")
     audio_dir = os.path.join(out_dir, "audio")
@@ -72,7 +72,7 @@ def preprocess_custom(dataset_path, out_dir, n_processes: int,
 
     # Create a metadata file
     metadata_fpath = os.path.join(out_dir, "train.txt")
-    metadata_file = metadata_fpath.open("a" if skip_existing else "w", encoding="utf-8")
+    metadata_file = open(metadata_fpath, "a+" if skip_existing else "w+", encoding="utf-8")
 
     # Preprocess the dataset
     func = partial(preprocess_sample, out_dir=out_dir, skip_existing=skip_existing,
