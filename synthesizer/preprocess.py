@@ -63,11 +63,15 @@ def preprocess_custom(dataset_path, out_dir, n_processes: int,
             sample_list.append(line.strip())
 
     # Create the output directories for each output file type
-    out_dir.joinpath("mels").mkdir(exist_ok=True)
-    out_dir.joinpath("audio").mkdir(exist_ok=True)
+    mels_dir = os.path.join(out_dir, "mels")
+    audio_dir = os.path.join(out_dir, "audio")
+    if not os.path.isdir(mels_dir):
+        os.makedirs(mels_dir)
+    if not os.path.isdir(audio_dir):
+        os.makedirs(audio_dir)
 
     # Create a metadata file
-    metadata_fpath = out_dir.joinpath("train.txt")
+    metadata_fpath = os.path.join(out_dir, "train.txt")
     metadata_file = metadata_fpath.open("a" if skip_existing else "w", encoding="utf-8")
 
     # Preprocess the dataset
