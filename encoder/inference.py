@@ -33,7 +33,7 @@ def load_model(weights_fpath: Path, device=None):
     checkpoint = torch.load(weights_fpath)
     _model.load_state_dict(checkpoint["model_state"])
     _model.eval()
-    print("Loaded encoder \"%s\" trained to step %d" % (weights_fpath.name, checkpoint["step"]))
+    print("Loaded encoder \"%s\" trained to step %d" % (weights_fpath.name, checkpoint["epoch"]))
     
     
 def is_loaded():
