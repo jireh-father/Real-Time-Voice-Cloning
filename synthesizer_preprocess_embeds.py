@@ -18,6 +18,9 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--n_processes", type=int, default=4, help= \
         "Number of parallel processes. An encoder is created for each, so you may need to lower "
         "this value on GPUs with low memory. Set it to 1 if CUDA is unhappy.")
+    parser.add_argument("-p", "--output_dir_postfix", type=str,
+                        default=None, help= \
+                            "Path your trained encoder model.")
     args = parser.parse_args()
     
     # Preprocess the dataset
