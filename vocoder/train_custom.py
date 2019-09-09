@@ -1,5 +1,5 @@
 from vocoder.models.fatchord_version import WaveRNN
-from vocoder.vocoder_dataset import VocoderDataset, collate_vocoder
+from vocoder.vocoder_dataset_custom import VocoderDataset, collate_vocoder
 from vocoder.distribution import discretized_mix_logistic_loss
 from vocoder.display import stream, simple_table
 from vocoder.gen_wavernn import gen_testset
