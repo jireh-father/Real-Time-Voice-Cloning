@@ -89,7 +89,7 @@ if __name__ == '__main__':
                 ## Load the models one by one.
                 print("Preparing the encoder, the synthesizer and the vocoder...")
                 encoder.load_model(enc_path)
-                synthesizer = Synthesizer(os.path.join(syn_path, "taco_pretrained"), low_mem=args.low_mem)
+                synthesizer = Synthesizer(syn_path.joinpath("taco_pretrained"), low_mem=args.low_mem)
                 vocoder.load_model(voc_path)
 
                 ## Computing the embedding
