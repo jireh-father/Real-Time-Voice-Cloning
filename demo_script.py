@@ -26,7 +26,7 @@ if __name__ == '__main__':
                         default="vocoder/saved_models/pretrained/pretrained.pt",
                         help="Path to a saved vocoder")
     parser.add_argument("-t", "--text_list", type=str,
-                        default="그는 괜찮은 척하려고 애쓰는것 같았다.|지난해 삼월 김전장관의 동료인 장동련 홍익대 교수가 민간 자문단장으로 위촉되면서 본격적인 공모와 개발 작업에 들어갔다.|[설빙](슈퍼브랜드데이) 딸기치즈메론(시즌한정)",
+                        default="그는 괜찮은 척하려고 애쓰는것 같았다.|지난해 삼월 김전장관의 동료인 장동련 홍익대 교수가 민간 자문단장으로 위촉되면서 본격적인 공모와 개발 작업에 들어갔다.|[설빙](슈퍼브랜드데이) 딸기치즈메론(시즌한정)|그래도 권위있는 아이비리그 명문대학의 발표이니 믿어야 할까요?|안녕하시렵니까? 저는 인공지능이예요.|상처가 있는 부위 등에는 사용을 자제해 주세요.|루메나 N9-STAND2 휴대용 무선 선풍",
                         help="Path to a saved vocoder")
     parser.add_argument("-w", "--wav_list", type=str,
                         default="vocoder/saved_models/pretrained/pretrained.pt",
