@@ -8,6 +8,7 @@ import librosa
 import argparse
 import torch
 import sys
+from pathlib import Path
 import os
 
 if __name__ == '__main__':
@@ -78,9 +79,9 @@ if __name__ == '__main__':
     total_cnt = len(enc_list) * len(wav_list) * len(text_list)
     created_cnt = 0
     for i in range(len(enc_list)):
-        enc_path = enc_list[i]
-        syn_path = syn_list[i]
-        voc_path = voc_list[i]
+        enc_path = Path(enc_list[i])
+        syn_path = Path(syn_list[i])
+        voc_path = Path(voc_list[i])
         for target_wav_path in wav_list:
             target_name = os.path.splitext(os.path.basename(target_wav_path))[0]
             for j, text in enumerate(text_list):
