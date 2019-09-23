@@ -82,15 +82,16 @@ if __name__ == '__main__':
         enc_path = Path(enc_list[i])
         syn_path = Path(syn_list[i])
         voc_path = Path(voc_list[i])
+        encoder.load_model(enc_path)
+        synthesizer = Synthesizer(syn_path.joinpath("taco_pretrained"), low_mem=args.low_mem)
+        vocoder.load_model(voc_path)
         for target_wav_path in wav_list:
             target_name = os.path.splitext(os.path.basename(target_wav_path))[0]
             for j, text in enumerate(text_list):
 
                 ## Load the models one by one.
                 print("Preparing the encoder, the synthesizer and the vocoder...")
-                encoder.load_model(enc_path)
-                synthesizer = Synthesizer(syn_path.joinpath("taco_pretrained"), low_mem=args.low_mem)
-                vocoder.load_model(voc_path)
+
 
                 ## Computing the embedding
                 # First, we load the wav using the function that the speaker encoder provides. This is
