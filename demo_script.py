@@ -10,6 +10,7 @@ import torch
 import sys
 from pathlib import Path
 import os
+import glob
 
 if __name__ == '__main__':
     ## Info & args
@@ -69,7 +70,10 @@ if __name__ == '__main__':
     enc_list = args.enc_model_fpath.split(",")
     syn_list = args.syn_model_dir.split(",")
     voc_list = args.voc_model_fpath.split(",")
-    wav_list = args.wav_list.split(",")
+    if os.path.isdir(args.wav_list):
+        wav_list = glob.glob(os.path.join(args.wav_list, "*.wav"))
+    else:
+        wav_list = args.wav_list.split(",")
     name_list = args.name_list.split(",")
     text_list = args.text_list.split("|")
 
