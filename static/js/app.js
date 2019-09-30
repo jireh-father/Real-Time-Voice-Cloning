@@ -1,4 +1,4 @@
-navigator.mediaDevices.getUserMedia({ audio: true, sampleRate: 16000 })
+navigator.mediaDevices.webkitGetUserMedia({ audio: true, sampleRate: 16000 })
   .then(stream => {
     mediaRecorder = new MediaRecorder(stream);
 
