@@ -1,0 +1,33 @@
+<script>
+
+  navigator.mediaDevices.getUserMedia({ audio: true, sampleRate: 16000 })
+  .then(stream => {
+    const mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.start();
+
+    const audioChunks = [];
+    mediaRecorder.addEventListener("dataavailable", event => {
+      audioChunks.push(event.data);
+    });
+
+    mediaRecorder.addEventListener("stop", () => {
+      const audioBlob = new Blob(audioChunks);
+
+
+      var xhr=new XMLHttpRequest();
+          xhr.onload=function(e) {
+              if(this.readyState === 4) {
+                  console.log("Server returned: ",e.target.responseText);
+              }
+          };
+            var fd=new FormData();
+          fd.append("audio_data",audioBlob, "test.webm");
+          xhr.open("POST","record",true);
+          xhr.send(fd);
+    });
+
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, 3000);
+  });
+</script>

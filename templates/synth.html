@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>성대모사</title>
+    <script src="static/js/jquery-3.4.1.slim.min.js"></script>
+    <script>
+        function auto_synth(this_obj){
+            $("#input_text").val($(this_obj).next().text());
+            $("#synth_button").click();
+        }
+    </script>
+</head>
+<body>
+<a href="">녹음하러 돌아가기</a>
+{% for file_path in file_list %}
+<h2>결과</h2>
+<p>소요시간: {{elapsed}} seconds </p>
+<audio controls>
+    <source src="static/result/{{file_path}}" type="audio/wav">
+    Your browser does not support the audio tag.
+</audio>
+<br/>
+<a href="download/{{file_path}}" target="_blank">wav 파일 다운로드</a>
+<a href="download_mp3/{{file_path}}" target="_blank">mp3 파일 다운로드</a>
+{% endfor %}
+</body>
+</html>
