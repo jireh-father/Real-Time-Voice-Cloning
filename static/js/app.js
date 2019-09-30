@@ -1,9 +1,8 @@
-navigator.getUserMedia = (navigator.getUserMedia ||
-                            navigator.webkitGetUserMedia ||
-                            navigator.mozGetUserMedia ||
-                            navigator.msGetUserMedia);
-
-navigator.getUserMedia({ audio: true, sampleRate: 16000 })
+//navigator.getUserMedia = (navigator.getUserMedia ||
+//                            navigator.webkitGetUserMedia ||
+//                            navigator.mozGetUserMedia ||
+//                            navigator.msGetUserMedia);
+navigator.mediaDevices.getUserMedia({ audio: true, sampleRate: 16000 })
   .then(stream => {
     mediaRecorder = new MediaRecorder(stream);
 
