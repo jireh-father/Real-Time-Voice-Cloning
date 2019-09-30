@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 from flask import Flask, render_template, redirect, url_for, request, send_from_directory
 import numpy as np
@@ -12,38 +13,19 @@ from encoder import inference as encoder
 from vocoder import inference as vocoder
 from pathlib import Path
 import librosa
-import argparse
 from pydub import AudioSegment
 
 synthesizer = None
-args = None
+text_list = "싸늘하다. 가슴에 비수가 날아와 꽂힌다.|하지만 걱정하지 마라. 손은 눈보다 빠르니까.|>아귀한텐 밑에서 한 장. 정마담도 밑에서 한 장.|나 한 장. 아귀한텐 다시 밑에서 한 장.|이제 정마담에게, 마지막 한 장."
 def init_model():
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument("-e", "--enc_model_fpath", type=str,
-                        default="encoder/saved_models/pretrained.pt",
-                        help="Path to a saved encoder")
-    parser.add_argument("-s", "--syn_model_dir", type=str,
-                        default="synthesizer/saved_models/logs-pretrained/",
-                        help="Directory containing the synthesizer model")
-    parser.add_argument("-v", "--voc_model_fpath", type=str,
-                        default="vocoder/saved_models/pretrained/pretrained.pt",
-                        help="Path to a saved vocoder")
-    parser.add_argument("-t", "--text_list", type=str,
-                        default="그는 괜찮은 척하려고 애쓰는것 같았다.|지난해 삼월 김전장관의 동료인 장동련 홍익대 교수가 민간 자문단장으로 위촉되었습니다.|설빙 슈퍼브랜드데이 딸기치즈메론 시즌한정|그래도 권위있는 아이비리그 명문대학의 발표이니 믿어야 할까요?|안녕하시렵니까? 저는 인공지능이예요.|상처가 있는 부위 등에는 사용을 자제해 주세요.|안녕하세요. 저는지금 성대모사중이예요.",
-                        help="Path to a saved vocoder")
-    parser.add_argument("--low_mem", action="store_true", help= \
-        "If True, the memory used by the synthesizer will be freed after each use. Adds large "
-        "overhead but allows to save some GPU memory for lower-end GPUs.")
-    global args
-    args = parser.parse_args()
-
-    encoder.load_model(args.enc_model_fpath)
-    syn_path = Path(args.syn_model_dir)
+    enc_model_fpath = "encoder/saved_models/batch64_10_e256_val_12_epoch.pt"
+    syn_model_dir = "synthesizer/saved_models/logs-synth_kr_epoch12_508k_steps/"
+    voc_model_fpath = "vocoder/saved_models/dim256_gta_bs256_epoch_12_508k_20190926/dim256_gta_bs256_epoch_12_508k_20190926.pt"
+    encoder.load_model(enc_model_fpath)
+    syn_path = Path(syn_model_dir)
     global synthesizer
-    synthesizer = Synthesizer(syn_path.joinpath("taco_pretrained"), low_mem=args.low_mem)
-    vocoder.load_model(args.voc_model_fpath)
+    synthesizer = Synthesizer(syn_path.joinpath("taco_pretrained"))
+    vocoder.load_model(voc_model_fpath)
 
 def create_app():
     app = Flask(__name__)
@@ -77,7 +59,7 @@ def record():
     target_wav_path = os.path.join(tmp_dir, filename + ".wav")
     filename_list = []
 
-    text_list = args.text_list.split("|")
+    text_list = text_list.split("|")
     for j, text in enumerate(text_list):
 
         ## Load the models one by one.
