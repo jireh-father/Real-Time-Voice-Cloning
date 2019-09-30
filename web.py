@@ -59,8 +59,8 @@ def record():
     target_wav_path = os.path.join(tmp_dir, filename + ".wav")
     filename_list = []
 
-    text_list = text_list.split("|")
-    for j, text in enumerate(text_list):
+    texts = text_list.split("|")
+    for j, text in enumerate(texts):
 
         ## Load the models one by one.
         print("Preparing the encoder, the synthesizer and the vocoder...")
