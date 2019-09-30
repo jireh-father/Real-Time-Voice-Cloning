@@ -17,33 +17,45 @@ from pydub import AudioSegment
 
 synthesizer = None
 text_list = "싸늘하다. 가슴에 비수가 날아와 꽂힌다.|하지만 걱정하지 마라. 손은 눈보다 빠르니까.|>아귀한텐 밑에서 한 장. 정마담도 밑에서 한 장.|나 한 장. 아귀한텐 다시 밑에서 한 장.|이제 정마담에게, 마지막 한 장."
+
+
 def init_model():
     enc_model_fpath = "/home/ilseo/source/Real-Time-Voice-Cloning/encoder/saved_models/batch64_10_e256_val_12_epoch.pt"
     syn_model_dir = "/home/ilseo/source/Real-Time-Voice-Cloning/synthesizer/saved_models/logs-synth_kr_epoch12_508k_steps/"
     voc_model_fpath = "/home/ilseo/source/Real-Time-Voice-Cloning/vocoder/saved_models/dim256_gta_bs256_epoch_12_508k_20190926/dim256_gta_bs256_epoch_12_508k_20190926.pt"
-    encoder.load_model(enc_model_fpath)
+
+    enc_path = Path(enc_model_fpath)
     syn_path = Path(syn_model_dir)
+    voc_path = Path(voc_model_fpath)
+    encoder.load_model(enc_path)
     global synthesizer
     synthesizer = Synthesizer(syn_path.joinpath("taco_pretrained"))
-    vocoder.load_model(voc_model_fpath)
+    vocoder.load_model(voc_path)
+
 
 def create_app():
     app = Flask(__name__)
+
     def run_on_start():
         init_model()
+
     run_on_start()
     return app
+
 
 tmp_dir = "/home/ilseo/source/Real-Time-Voice-Cloning/static/tmp"
 os.makedirs(tmp_dir, exist_ok=True)
 wav_result_dir = "/home/ilseo/source/Real-Time-Voice-Cloning/static/result"
 os.makedirs(wav_result_dir, exist_ok=True)
 app = create_app()
+
+
 # app = Flask(__name__)
 
 @app.route("/index")
 def index():
     return render_template("recorder.html")
+
 
 @app.route("/record", methods=['POST'])
 def record():
@@ -61,7 +73,6 @@ def record():
 
     texts = text_list.split("|")
     for j, text in enumerate(texts):
-
         ## Load the models one by one.
         print("Preparing the encoder, the synthesizer and the vocoder...")
 
@@ -109,6 +120,7 @@ def record():
 
     return render_template("synth.html", filename=filename_list)
 
+
 @app.after_request
 def add_header(r):
     """
@@ -126,12 +138,14 @@ def add_header(r):
 def download(filename):
     return send_from_directory(directory=wav_result_dir, filename=filename, as_attachment=True)
 
+
 @app.route('/download_mp3/<path:filename>', methods=['GET', 'POST'])
 def download_mp3(filename):
     new_filename = os.path.splitext(filename)[0] + ".mp3"
-    AudioSegment.from_wav(os.path.join(wav_result_dir, filename)).export(os.path.join(wav_result_dir, new_filename), format="mp3")
+    AudioSegment.from_wav(os.path.join(wav_result_dir, filename)).export(os.path.join(wav_result_dir, new_filename),
+                                                                         format="mp3")
     return send_from_directory(directory=wav_result_dir, filename=new_filename, as_attachment=True)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     app.run(debug=True, threaded=False)
