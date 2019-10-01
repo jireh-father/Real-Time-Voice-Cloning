@@ -136,7 +136,7 @@ def record():
     for wav in wavs[1:]:
         combined = combined.append(wav)
     join_filename = "%s_join.wav" % filename
-    combined.export(join_filename, format="wav")
+    combined.export(os.path.join(wav_result_dir, join_filename), format="wav")
 
     return render_template("synth.html", file_list=filename_list, target_filename=target_filename,
                            text_list=result_text_list,
