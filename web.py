@@ -4,9 +4,9 @@ from flask import Flask, render_template, redirect, url_for, request, send_from_
 import numpy as np
 import os
 import uuid
-# from synthesizer.inference import Synthesizer
-# from encoder import inference as encoder
-# from vocoder import inference as vocoder
+from synthesizer.inference import Synthesizer
+from encoder import inference as encoder
+from vocoder import inference as vocoder
 from pathlib import Path
 import librosa
 from pydub import AudioSegment
@@ -35,7 +35,7 @@ def create_app():
     def run_on_start():
         init_model()
 
-    # run_on_start()
+    run_on_start()
     return app
 
 
