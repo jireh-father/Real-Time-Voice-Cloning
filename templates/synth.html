@@ -13,16 +13,23 @@
 </head>
 <body>
 <a href="upload">업로드 페이지로 돌아가기</a>
-{% for file_path in file_list %}
-<h2>결과</h2>
-<p>소요시간: {{elapsed}} seconds </p>
+<h2>원본 음성</h2>
 <audio controls>
-    <source src="static/result/{{file_path}}" type="audio/wav">
+    <source src="static/tmp/{{target_filename}}" type="audio/wav">
     Your browser does not support the audio tag.
 </audio>
 <br/>
-<a href="download/{{file_path}}" target="_blank">wav 파일 다운로드</a>
-<a href="download_mp3/{{file_path}}" target="_blank">mp3 파일 다운로드</a>
+<h2>결과</h2>
+{% for i in range(0, len) %}
+<p>소요시간: {{elapsed_list[i]}} seconds </p>
+<p>Script: {{text_list[i]}} </p>
+<audio controls>
+    <source src="static/result/{{filename_list[i]}}" type="audio/wav">
+    Your browser does not support the audio tag.
+</audio>
+<br/>
+<a href="download/{{filename_list[i]}}" target="_blank">wav 파일 다운로드</a>
+<a href="download_mp3/{{filename_list[i]}}" target="_blank">mp3 파일 다운로드</a>
 {% endfor %}
 </body>
 </html>

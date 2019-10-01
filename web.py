@@ -11,6 +11,7 @@ from pathlib import Path
 import librosa
 from pydub import AudioSegment
 import subprocess
+import time
 
 synthesizer = None
 
@@ -72,7 +73,9 @@ def record():
 
         subprocess.call(command, shell=True)
     target_wav_path = os.path.join(tmp_dir, filename + ".wav")
+    target_filename = filename + ".wav"
     filename_list = []
+    elapsed_list = []
 
     for j, text in enumerate(text_list):
         text = text.strip()
@@ -89,6 +92,7 @@ def record():
         # - Directly load from the filepath:
         # preprocessed_wav = encoder.preprocess_wav(target_wav_path)
         # - If the wav is already loaded:
+        start = time.time()
         original_wav, sampling_rate = librosa.load(target_wav_path)
         preprocessed_wav = encoder.preprocess_wav(original_wav, sampling_rate)
         print("Loaded file succesfully")
@@ -117,13 +121,15 @@ def record():
         generated_wav = np.pad(generated_wav, (0, synthesizer.sample_rate), mode="constant")
 
         # Save it on the disk
-        filename = "%s_%d.wav" % (filename, j)
-        audio_path = os.path.join(wav_result_dir, filename)
+        tmp_filename = "%s_%d.wav" % (filename, j)
+        audio_path = os.path.join(wav_result_dir, tmp_filename)
         librosa.output.write_wav(audio_path, generated_wav.astype(np.float32),
                                  synthesizer.sample_rate)
-        filename_list.append(filename)
+        filename_list.append(tmp_filename)
+        elapsed_list.append(str(time.time() - start))
 
-    return render_template("synth.html", file_list=filename_list)
+    return render_template("synth.html", file_list=filename_list, target_filename=target_filename, text_list=text_list,
+                           elapsed_list=elapsed_list, len=len(filename_list))
 
 
 @app.after_request
