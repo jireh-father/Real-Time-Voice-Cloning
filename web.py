@@ -131,19 +131,12 @@ def record():
         filename_list.append(tmp_filename)
         elapsed_list.append(str(time.time() - start))
 
-    data = []
-    for infile in filename_list:
-        infile = os.path.join(wav_result_dir, infile)
-        w = wave.open(infile, 'rb')
-        data.append([w.getparams(), w.readframes(w.getnframes())])
-        w.close()
-
-    join_filename = "%s_join.wav" % (filename)
-    output = wave.open(join_filename, 'wb')
-    output.setparams(data[0][0])
-    output.writeframes(data[0][1])
-    output.writeframes(data[1][1])
-    output.close()
+    wavs = [AudioSegment.from_wav(os.path.join(wav_result_dir, wav)) for wav in filename_list]
+    combined = wavs[0]
+    for wav in wavs[1:]:
+        combined = combined.append(wav)
+    join_filename = "%s_join.wav" % filename
+    combined.export(join_filename, format="wav")
 
     return render_template("synth.html", file_list=filename_list, target_filename=target_filename,
                            text_list=result_text_list,
