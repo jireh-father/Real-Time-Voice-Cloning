@@ -19,7 +19,14 @@
     Your browser does not support the audio tag.
 </audio>
 <br/>
-<h2>결과</h2>
+<h2>전체 연결 결과</h2>
+<p>Script: {{all_text}} </p>
+<audio controls>
+    <source src="static/result/{{join_filename}}" type="audio/wav">
+    Your browser does not support the audio tag.
+</audio>
+<br/>
+<h2>개별 결과</h2>
 {% for i in range(0, len) %}
 <p>소요시간: {{elapsed_list[i]}} seconds </p>
 <p>Script: {{text_list[i]}} </p>
@@ -31,5 +38,7 @@
 <a href="download/{{file_list[i]}}" target="_blank">wav 파일 다운로드</a>
 <a href="download_mp3/{{file_list[i]}}" target="_blank">mp3 파일 다운로드</a>
 {% endfor %}
+
+<br/>
 </body>
 </html>

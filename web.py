@@ -12,6 +12,7 @@ import librosa
 from pydub import AudioSegment
 import subprocess
 import time
+import wave
 
 synthesizer = None
 
@@ -53,6 +54,7 @@ app = create_app()
 def upload():
     return render_template("upload.html")
 
+
 @app.route("/index")
 def index():
     return render_template("recorder.html")
@@ -76,11 +78,12 @@ def record():
     target_filename = filename + ".wav"
     filename_list = []
     elapsed_list = []
-
+    result_text_list = []
     for j, text in enumerate(text_list):
         text = text.strip()
         if len(text) == 0:
             continue
+        result_text_list.append(text)
         ## Load the models one by one.
         print("Preparing the encoder, the synthesizer and the vocoder...")
 
@@ -128,8 +131,24 @@ def record():
         filename_list.append(tmp_filename)
         elapsed_list.append(str(time.time() - start))
 
-    return render_template("synth.html", file_list=filename_list, target_filename=target_filename, text_list=text_list,
-                           elapsed_list=elapsed_list, len=len(filename_list))
+    data = []
+    for infile in filename_list:
+        infile = os.path.join(wav_result_dir, infile)
+        w = wave.open(infile, 'rb')
+        data.append([w.getparams(), w.readframes(w.getnframes())])
+        w.close()
+
+    join_filename = "%s_join.wav" % (filename)
+    output = wave.open(join_filename, 'wb')
+    output.setparams(data[0][0])
+    output.writeframes(data[0][1])
+    output.writeframes(data[1][1])
+    output.close()
+
+    return render_template("synth.html", file_list=filename_list, target_filename=target_filename,
+                           text_list=result_text_list,
+                           elapsed_list=elapsed_list, len=len(filename_list), join_filename=join_filename,
+                           all_text=" ".join(result_text_list))
 
 
 @app.after_request
