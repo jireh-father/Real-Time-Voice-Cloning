@@ -119,7 +119,7 @@ def record():
                                  synthesizer.sample_rate)
         filename_list.append(filename)
 
-    return render_template("synth.html", filename=filename_list)
+    return render_template("synth.html", file_list=filename_list)
 
 
 @app.after_request
