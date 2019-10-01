@@ -3,18 +3,14 @@ import sys
 from flask import Flask, render_template, redirect, url_for, request, send_from_directory
 import numpy as np
 import os
-import torch
-from scipy.io.wavfile import write
 import uuid
-import ssl
-import time
-import random
 from synthesizer.inference import Synthesizer
 from encoder import inference as encoder
 from vocoder import inference as vocoder
 from pathlib import Path
 import librosa
 from pydub import AudioSegment
+import subprocess
 
 synthesizer = None
 text_list = "싸늘하다. 가슴에 비수가 날아와 꽂힌다.|하지만 걱정하지 마라. 손은 눈보다 빠르니까.|>아귀한텐 밑에서 한 장. 정마담도 밑에서 한 장.|나 한 장. 아귀한텐 다시 밑에서 한 장.|이제 정마담에게, 마지막 한 장."
@@ -40,7 +36,7 @@ def create_app():
     def run_on_start():
         init_model()
 
-    run_on_start()
+    # run_on_start()
     return app
 
 
@@ -53,6 +49,10 @@ app = create_app()
 
 # app = Flask(__name__)
 
+@app.route("/upload")
+def upload():
+    return render_template("upload.html")
+
 @app.route("/index")
 def index():
     return render_template("recorder.html")
@@ -60,15 +60,15 @@ def index():
 
 @app.route("/record", methods=['POST'])
 def record():
-    f = request.files['audio_data']
+    f = request.files['audio']
     filename = str(uuid.uuid4())
-    f.save(os.path.join(tmp_dir, filename + ".webm"))
+    ext = os.path.splitext(request.files['audio'].filename)[1]
+    f.save(os.path.join(tmp_dir, filename + ext))
 
-    import subprocess
+    if ext.lower() in [".mp3", "m4a"]:
+        command = "avconv -i %s.m4a %s.wav" % (os.path.join(tmp_dir, filename + ext), os.path.join(tmp_dir, filename + ".wav"))
 
-    command = "ffmpeg -i filename.webm -ab 160k -ac 2 -ar 16000 -vn %s.wav" % os.path.join(tmp_dir, filename + ".wav")
-
-    subprocess.call(command, shell=True)
+        subprocess.call(command, shell=True)
     target_wav_path = os.path.join(tmp_dir, filename + ".wav")
     filename_list = []
 
