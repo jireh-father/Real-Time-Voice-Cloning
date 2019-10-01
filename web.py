@@ -36,7 +36,7 @@ def create_app():
     def run_on_start():
         init_model()
 
-    # run_on_start()
+    run_on_start()
     return app
 
 
