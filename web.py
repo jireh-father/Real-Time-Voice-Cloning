@@ -13,7 +13,7 @@ from pydub import AudioSegment
 import subprocess
 
 synthesizer = None
-text_list = "싸늘하다. 가슴에 비수가 날아와 꽂힌다.|하지만 걱정하지 마라. 손은 눈보다 빠르니까.|>아귀한텐 밑에서 한 장. 정마담도 밑에서 한 장.|나 한 장. 아귀한텐 다시 밑에서 한 장.|이제 정마담에게, 마지막 한 장."
+text_list = ["싸늘하다. 가슴에 비수가 날아와 꽂힌다.","하지만 걱정하지 마라. 손은 눈보다 빠르니까.","아귀한텐 밑에서 한 장. 정마담도 밑에서 한 장."]#, "나 한 장. 아귀한텐 다시 밑에서 한 장.","이제 정마담에게, 마지막 한 장."]
 
 
 def init_model():
@@ -72,8 +72,7 @@ def record():
     target_wav_path = os.path.join(tmp_dir, filename + ".wav")
     filename_list = []
 
-    texts = text_list.split("|")
-    for j, text in enumerate(texts):
+    for j, text in enumerate(text_list):
         ## Load the models one by one.
         print("Preparing the encoder, the synthesizer and the vocoder...")
 
