@@ -4,16 +4,15 @@ from flask import Flask, render_template, redirect, url_for, request, send_from_
 import numpy as np
 import os
 import uuid
-from synthesizer.inference import Synthesizer
-from encoder import inference as encoder
-from vocoder import inference as vocoder
+# from synthesizer.inference import Synthesizer
+# from encoder import inference as encoder
+# from vocoder import inference as vocoder
 from pathlib import Path
 import librosa
 from pydub import AudioSegment
 import subprocess
 
 synthesizer = None
-text_list = ["싸늘하다. 가슴에 비수가 날아와 꽂힌다.","하지만 걱정하지 마라. 손은 눈보다 빠르니까.","아귀한텐 밑에서 한 장. 정마담도 밑에서 한 장."]#, "나 한 장. 아귀한텐 다시 밑에서 한 장.","이제 정마담에게, 마지막 한 장."]
 
 
 def init_model():
@@ -36,7 +35,7 @@ def create_app():
     def run_on_start():
         init_model()
 
-    run_on_start()
+    # run_on_start()
     return app
 
 
@@ -58,11 +57,14 @@ def index():
     return render_template("recorder.html")
 
 
-@app.route("/record", methods=['POST'])
+@app.route("/record", methods=['POST', 'GET'])
 def record():
     f = request.files['audio']
     filename = str(uuid.uuid4())
     ext = os.path.splitext(request.files['audio'].filename)[1]
+    text_list = request.form.get('text_list', default="텍스트를 입력하라 말이여.")
+    text_list = text_list.split(os.linesep)
+    print(text_list)
     f.save(os.path.join(tmp_dir, filename + ext))
 
     if ext.lower() in [".mp3", ".m4a"]:
@@ -73,6 +75,9 @@ def record():
     filename_list = []
 
     for j, text in enumerate(text_list):
+        text = text.strip()
+        if len(text) == 0:
+            continue
         ## Load the models one by one.
         print("Preparing the encoder, the synthesizer and the vocoder...")
 
