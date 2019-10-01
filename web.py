@@ -6,6 +6,7 @@ import os
 import torch
 from scipy.io.wavfile import write
 import uuid
+import ssl
 import time
 import random
 from synthesizer.inference import Synthesizer
@@ -112,7 +113,7 @@ def record():
         generated_wav = np.pad(generated_wav, (0, synthesizer.sample_rate), mode="constant")
 
         # Save it on the disk
-        filename = str(uuid.uuid4()) + '.wav'
+        filename = "%s_%d.wav" % (filename, j)
         audio_path = os.path.join(wav_result_dir, filename)
         librosa.output.write_wav(audio_path, generated_wav.astype(np.float32),
                                  synthesizer.sample_rate)
