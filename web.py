@@ -66,7 +66,7 @@ def record():
     f.save(os.path.join(tmp_dir, filename + ext))
 
     if ext.lower() in [".mp3", ".m4a"]:
-        command = "avconv -i %s.m4a %s.wav" % (os.path.join(tmp_dir, filename + ext), os.path.join(tmp_dir, filename + ".wav"))
+        command = "avconv -i %s %s" % (os.path.join(tmp_dir, filename + ext), os.path.join(tmp_dir, filename + ".wav"))
 
         subprocess.call(command, shell=True)
     target_wav_path = os.path.join(tmp_dir, filename + ".wav")
