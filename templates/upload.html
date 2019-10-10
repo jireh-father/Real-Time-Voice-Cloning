@@ -8,18 +8,19 @@
 <form action="record" method="post" enctype="multipart/form-data">
     <p>목소리가 녹음된 음성 파일을 업로드해주세요.(wav, mp3, m4a)</p><br/>
     <p><a href="https://online-voice-recorder.com/ko/" target="_blank">녹음 사이트</a></p>
-    <p>웹, 스마트폰, 노트북등으로 직접 녹음한 음성이 성대모사가 잘 됩니다.</p>
-    <p>(발표, 드마라, 뉴스, 라디오 등에서 녹음된 음성은 비교적 결과가 좋지 않습니다.)</p>
-<input type="file" name="audio" id="fileToUpload">
+    <p><b>마이크가 달린 이어폰 등으로 녹음한 음성이 성대모사가 잘 됩니다.</b></p>
+    <p>노트북이나 휴대폰 마이크로 녹음하면 음성이 울리게끔 녹음되어 성대모사가 잘 되지 않습니다.</p>
+    <p>발표, 드마라, 뉴스, 라디오 등에서 녹음된 음성은 비교적 결과가 좋지 않습니다.</p>
+
 <input type="submit" value="Upload" name="submit">
     <br/><br/>
     <p>최대 30글자 정도로 문장을 만들어주세요.</p>
     <p>여러 문장을 입력할 경우 새로운 라인에 입력해주세요.</p>
     <p>너무 많은 문장을 입력하면 오래걸립니다.</p>
     <p>문장 하나당 약 7~10초 정도 소요됩니다.</p>
-    <textarea name="text_list" style="width: 1000px; height: 500px;">아 배고프다. 맛있는거 먹고싶다.
-저는 인공지능이예요.
-지금 성대모사 중이예요.</textarea><br/>
+    <textarea name="text_list" style="width: 500px; height: 230px;">그는 괜찮은척 하려고 애쓰는것 같았다.
+    </textarea><br/>
+<input type="file" name="audio" id="fileToUpload">
 </form>
 </body>
 </html>
