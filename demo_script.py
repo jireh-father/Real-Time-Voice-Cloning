@@ -71,7 +71,7 @@ if __name__ == '__main__':
     syn_list = args.syn_model_dir.split(",")
     voc_list = args.voc_model_fpath.split(",")
     if os.path.isdir(args.wav_list):
-        wav_list = glob.glob(os.path.join(args.wav_list, "*.wav"))
+        wav_list = glob.glob(os.path.join(args.wav_list, "*"))
     else:
         wav_list = args.wav_list.split(",")
     name_list = args.name_list.split(",")
